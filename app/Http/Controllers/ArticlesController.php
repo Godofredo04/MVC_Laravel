@@ -13,29 +13,8 @@ class ArticlesController extends Controller{
     }
 
     public function show(){
-        $articlesList = Article::all();
-        //$myArticle = Article::findOrFail($id);
-        //$articlesList = Article::where('id', '>', 100)->get();
-        //$articlesList = Article::where('id', '>', 100)->take(10)->get();
-        //$maxId = Article::max('id');
-
+        $articlesList = Article::where('user_id', auth()->id())->get();
         return view('articles', compact('articlesList'));
-        /*$id = '12345678A';
-        $username = 'Javi';
-        $articles = collect([
-        [
-        'nombre' => 'Articulo 1', 
-        'precio' => 'Precio Articulo 1', 
-        'descripcion' => 'Descripción 1'
-        ],
-        [
-        'nombre' => 'Articulo 2', 
-        'precio' => 'Precio Articulo 2', 
-        'descripcion' => 'Descripción 2'
-        ]
-    ]);
-
-        return view('articles', compact('id', 'username', 'articles'));*/
     }
 
     public function showID($id){
@@ -60,6 +39,7 @@ class ArticlesController extends Controller{
         $article->id_art = $request->input('id_art');
         $article->titulo = $request->input('titulo');
         $article->cuerpo = $request->input('descripcion');
+        $article->user_id = auth()->id();
         $article->save();
 
         return redirect()->route('articulos.show');
@@ -73,6 +53,30 @@ class ArticlesController extends Controller{
         }else{
             $article->delete();
             return redirect()->route('articulos.show')->with('success', 'Artículo eliminado con éxito.');
+        }
+    }
+
+    public function edit($id){
+        $article = Article::where('id_art', $id)->where('user_id', auth()->id())->first();
+
+        if(!$article){
+            abort(404);
+        }
+
+        return view('edit', compact('article'));
+    }
+
+    public function update(Request $request, $id){
+        $article = Article::where('id_art', $id)->where('user_id', auth()->id())->first();
+
+        if(!$article){
+            abort(404);
+        }else{
+            $article->id_art = $request->input('id_art');
+            $article->titulo = $request->input('titulo');
+            $article->cuerpo = $request->input('descripcion');
+            $article->save();
+            return redirect()->route('articulos.show');
         }
     }
 }

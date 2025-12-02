@@ -12,6 +12,10 @@ Route::get('/articulos/create', [ArticlesController::class, 'create'])->name('ar
 Route::post('/articulos', [ArticlesController::class, 'store'])->name('articulos.store');
 Route::get('/articulos/{id}', [ArticlesController::class, 'showID']);
 Route::delete('/articulos/{id}', [ArticlesController::class, 'destroy'])->name('articulos.destroy')->middleware("auth");
+Route::get('/articulos/update/{id}', [ArticlesController::class, 'edit'])->name('articulos.edit')->middleware("auth");
+Route::post('/articulos/{id}',[ArticlesController::class, 'update'])->name('articulos.update')->middleware("auth");
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

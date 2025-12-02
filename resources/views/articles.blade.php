@@ -1,31 +1,45 @@
 @extends('layout.app')
 @yield('Lista de articulos')
 @section('sidebar')
-    <p>texto de ejemplo</p>
+    <p></p>
 @endsection
 @yield('content')
-    <h1>Lista de articulos</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Lista de articulos de {{ auth()->user()->name ?? 'Invitado'}}</h1>
     @if($articlesList->count() === 0)
     <p>No existen articulos</p>
     @else
-    <table border='1';>
+    <table class="min-w-full border-collapse text-gray-700 shadow rounded mb-6">
         
          @foreach($articlesList as $article)
-            <tr>
-                <td><a href="{{url('/articulos/' . $article->id_art) }}">{{$article["id_art"]}} </a></td>
-                <td>{{$article["titulo"]}}</td>
-                <td>{{$article["cuerpo"]}}</td>
+            <tr class="even:bg-gray-100 hover:bg-indigo-50">
+                <td class="px-4 py-2"><a href="{{url('/articulos/' . $article->id_art) }}">{{$article["id_art"]}} </a></td>
+                <td class="px-4 py-2">{{$article["titulo"]}}</td>
+                <td class="px-4 py-2">{{$article["cuerpo"]}}</td>
                 @auth
-                <td>
+                <td class=class="px-4 py-2">
                     <form action= "{{ route('articulos.destroy', $article->id_art) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <input type="submit" value="eliminar articulo">
+                        <input type="submit" value="eliminar articulo" class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    </form>
+                </td>
+                <td class="px-4 py-2">
+                    <form action= "{{ route('articulos.edit', $article->id_art) }}">
+                        @csrf
+                        @method('POST')
+                        <input type="submit" value="actualizar articulo" class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">
                     </form>
                 </td>
                 @endauth
             </tr>
         @endforeach
     </table>
-    <p><a href="{{ route('articulos.create') }}"><button>Añadir artículos</button></a></p>
     @endif
+    <p><a href="{{ route('articulos.create') }}"><button class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">Añadir artículos</button></a>
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">Cerrar sesión</button>
+    </p>
+    </form>
+
+    
