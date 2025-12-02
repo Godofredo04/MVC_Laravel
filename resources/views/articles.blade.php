@@ -15,6 +15,7 @@
                 <td><a href="{{url('/articulos/' . $article->id_art) }}">{{$article["id_art"]}} </a></td>
                 <td>{{$article["titulo"]}}</td>
                 <td>{{$article["cuerpo"]}}</td>
+                @auth
                 <td>
                     <form action= "{{ route('articulos.destroy', $article->id_art) }}" method="POST">
                         @csrf
@@ -22,6 +23,7 @@
                         <input type="submit" value="eliminar articulo">
                     </form>
                 </td>
+                @endauth
             </tr>
         @endforeach
     </table>

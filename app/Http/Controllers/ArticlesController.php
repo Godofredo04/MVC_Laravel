@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Article;
 
@@ -71,7 +72,6 @@ class ArticlesController extends Controller{
             abort(404);
         }else{
             $article->delete();
-
             return redirect()->route('articulos.show')->with('success', 'Artículo eliminado con éxito.');
         }
     }
