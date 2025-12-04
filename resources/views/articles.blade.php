@@ -4,6 +4,20 @@
     <p></p>
 @endsection
 @yield('content')
+   <nav class="flex justify-start space-x-4 mb-6 items-center bg-gray-800 text-white p-4 w-full">
+        <form method="GET" action="{{ route('articulos.create') }}">
+            <button class="hover:bg-blue-600 px-4 py-2 rounded"> 
+                Añadir artículos
+            </button>
+        </a>
+        </form>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="hover:bg-blue-600 px-4 py-2 rounded">
+                Cerrar sesión
+            </button>
+        </form>
+    </nav>
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Lista de articulos de {{ auth()->user()->name ?? 'Invitado'}}</h1>
     @if($articlesList->count() === 0)
     <p>No existen articulos</p>
@@ -35,11 +49,6 @@
         @endforeach
     </table>
     @endif
-    <p><a href="{{ route('articulos.create') }}"><button class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">Añadir artículos</button></a>
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">Cerrar sesión</button>
-    </p>
     </form>
 
     
