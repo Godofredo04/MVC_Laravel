@@ -1,54 +1,104 @@
 @extends('layout.app')
-@yield('Lista de articulos')
+@section('title', 'Lista de artículos')
+
 @section('sidebar')
     <p></p>
 @endsection
-@yield('content')
-   <nav class="flex justify-start space-x-4 mb-6 items-center bg-gray-800 text-white p-4 w-full">
-        <form method="GET" action="{{ route('articulos.create') }}">
-            <button class="hover:bg-blue-600 px-4 py-2 rounded"> 
-                Añadir artículos
-            </button>
+
+@section('content')
+    {{-- BARRA DE NAVEGACIÓN (Se mantiene correcta) --}}
+    <nav class="flex justify-start space-x-4 mb-6 items-center bg-gray-800 text-white p-4 w-full">
+        <a href="{{ route('articulos.show') }}" class="bg-blue-600 px-4 py-2 rounded">
+            Artículos
         </a>
-        </form>
-        <form method="POST" action="{{ route('logout') }}">
+        
+        @if(auth()->check() && auth()->user()->is_admin)
+            <a href="{{ route('users.index') }}" class="hover:bg-blue-600 px-4 py-2 rounded">
+                Usuarios
+            </a>
+        @endif
+        
+        <form method="POST" action="{{ route('logout') }}" class="ml-auto">
             @csrf
-            <button class="hover:bg-blue-600 px-4 py-2 rounded">
+            <button type="submit" class="hover:bg-blue-600 px-4 py-2 rounded">
                 Cerrar sesión
             </button>
         </form>
     </nav>
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Lista de articulos de {{ auth()->user()->name ?? 'Invitado'}}</h1>
-    @if($articlesList->count() === 0)
-    <p>No existen articulos</p>
-    @else
-    <table class="min-w-full border-collapse text-gray-700 shadow rounded mb-6">
-        
-         @foreach($articlesList as $article)
-            <tr class="even:bg-gray-100 hover:bg-indigo-50">
-                <td class="px-4 py-2"><a href="{{url('/articulos/' . $article->id_art) }}">{{$article["id_art"]}} </a></td>
-                <td class="px-4 py-2">{{$article["titulo"]}}</td>
-                <td class="px-4 py-2">{{$article["cuerpo"]}}</td>
-                @auth
-                <td class=class="px-4 py-2">
-                    <form action= "{{ route('articulos.destroy', $article->id_art) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <input type="submit" value="eliminar articulo" class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                    </form>
-                </td>
-                <td class="px-4 py-2">
-                    <form action= "{{ route('articulos.edit', $article->id_art) }}">
-                        @csrf
-                        @method('POST')
-                        <input type="submit" value="actualizar articulo" class="bg-gray-800 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                    </form>
-                </td>
-                @endauth
-            </tr>
-        @endforeach
-    </table>
-    @endif
-    </form>
 
-    
+    {{-- CONTENIDO PRINCIPAL CENTRADO --}}
+    <div class="container mx-auto px-4">
+        
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">
+                Lista de artículos de {{ auth()->user()->name ?? 'Invitado'}}
+            </h1>
+            <a href="{{ route('articulos.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                Añadir artículo
+            </a>
+        </div>
+        
+        @if($articlesList->count() === 0)
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+                <p>No existen artículos.</p>
+            </div>
+        @else
+            <div class="overflow-x-auto shadow rounded-lg">
+                <table class="min-w-full border-collapse bg-white">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-medium w-1/12">ID</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium w-3/12">Título</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium w-4/12">Cuerpo</th>
+                            @auth
+                                {{-- colspan="2" asegura que esta columna ocupe el espacio de los dos botones --}}
+                                <th class="px-6 py-3 text-center text-sm font-medium w-4/12">Acciones</th>
+                            @endauth
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        @foreach($articlesList as $article)
+                            <tr class="even:bg-gray-100 hover:bg-indigo-50 border-b">
+                                {{-- 1. ID --}}
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('articulos.show', $article->id_art) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                        {{ $article->id_art }}
+                                    </a>
+                                </td>
+                                {{-- 2. Título --}}
+                                <td class="px-6 py-4">{{ $article->titulo }}</td>
+                                {{-- 3. Cuerpo --}}
+                                <td class="px-6 py-4">{{ Str::limit($article->cuerpo, 80) }}</td> {{-- Se limita el texto para mejor vista --}}
+                                
+                                @auth
+                                    {{-- 4. ACCIONES (Celda que contiene ambos botones) --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex space-x-2 justify-center">
+                                            
+                                            {{-- Botón de Editar --}}
+                                            <a href="{{ route('articulos.edit', $article->id_art) }}" 
+                                               class="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded text-sm whitespace-nowrap">
+                                                Editar artículo
+                                            </a>
+                                            
+                                            {{-- Botón de Eliminar --}}
+                                            <form action="{{ route('articulos.destroy', $article->id_art) }}" method="POST"
+                                                  onsubmit="return confirm('¿Estás seguro de eliminar este artículo?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-black px-3 py-1 rounded text-sm whitespace-nowrap">
+                                                    Eliminar artículo
+                                                </button>
+                                            </form>
+                                            
+                                        </div>
+                                    </td>
+                                @endauth
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+@endsection
