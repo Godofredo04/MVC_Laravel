@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-    {{-- BARRA DE NAVEGACIÓN (Se mantiene correcta) --}}
+    {{-- BARRA DE NAVEGACIÓN --}}
     <nav class="flex justify-start space-x-4 mb-6 items-center bg-gray-800 text-white p-4 w-full">
         <a href="{{ route('articulos.show') }}" class="bg-blue-600 px-4 py-2 rounded">
             Artículos
@@ -26,7 +26,7 @@
         </form>
     </nav>
 
-    {{-- CONTENIDO PRINCIPAL CENTRADO --}}
+    {{-- CONTENIDO PRINCIPAL --}}
     <div class="container mx-auto px-4">
         
         <div class="flex justify-between items-center mb-6">
@@ -51,7 +51,6 @@
                             <th class="px-6 py-3 text-left text-sm font-medium w-3/12">Título</th>
                             <th class="px-6 py-3 text-left text-sm font-medium w-4/12">Cuerpo</th>
                             @auth
-                                {{-- colspan="2" asegura que esta columna ocupe el espacio de los dos botones --}}
                                 <th class="px-6 py-3 text-center text-sm font-medium w-4/12">Acciones</th>
                             @endauth
                         </tr>
@@ -68,20 +67,17 @@
                                 {{-- 2. Título --}}
                                 <td class="px-6 py-4">{{ $article->titulo }}</td>
                                 {{-- 3. Cuerpo --}}
-                                <td class="px-6 py-4">{{ Str::limit($article->cuerpo, 80) }}</td> {{-- Se limita el texto para mejor vista --}}
+                                <td class="px-6 py-4">{{ Str::limit($article->cuerpo, 80) }}</td>
                                 
                                 @auth
-                                    {{-- 4. ACCIONES (Celda que contiene ambos botones) --}}
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex space-x-2 justify-center">
                                             
-                                            {{-- Botón de Editar --}}
                                             <a href="{{ route('articulos.edit', $article->id_art) }}" 
                                                class="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded text-sm whitespace-nowrap">
                                                 Editar artículo
                                             </a>
                                             
-                                            {{-- Botón de Eliminar --}}
                                             <form action="{{ route('articulos.destroy', $article->id_art) }}" method="POST"
                                                   onsubmit="return confirm('¿Estás seguro de eliminar este artículo?');">
                                                 @csrf
