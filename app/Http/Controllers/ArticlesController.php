@@ -8,10 +8,6 @@ use App\Models\Article;
 
 class ArticlesController extends Controller{
     
-    public function index(){
-        return "Hola, mundo";
-    }
-
     public function show(){
         $articlesList = Article::where('user_id', auth()->id())->get();
         return view('articles', compact('articlesList'));
